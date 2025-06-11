@@ -20,6 +20,7 @@ public class HomeActivity extends AppCompatActivity {
     private Button addShiftButton, requestSwapButton;
     private String userRole;
     private String userId;
+    private String userName; // Store name for use in Intent
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,10 +54,10 @@ public class HomeActivity extends AppCompatActivity {
         db.collection("users").document(userId).get()
                 .addOnSuccessListener(documentSnapshot -> {
                     if (documentSnapshot.exists()) {
-                        String name = documentSnapshot.getString("name");
+                        userName = documentSnapshot.getString("name"); // Store name
                         userRole = documentSnapshot.getString("role");
-                        android.util.Log.d("ShiftixApp", "User data: name=" + name + ", role=" + userRole);
-                        welcomeTextView.setText("Welcome, " + name);
+                        android.util.Log.d("ShiftixApp", "User data: name=" + userName + ", role=" + userRole);
+                        welcomeTextView.setText("Welcome, " + userName);
                         roleTextView.setText("Role: " + userRole);
 
                         // Show buttons for Doctors/Interns
@@ -95,7 +96,9 @@ public class HomeActivity extends AppCompatActivity {
         // Add shift button click
         addShiftButton.setOnClickListener(v -> {
             android.util.Log.d("ShiftixApp", "Add Shift button clicked");
-            startActivity(new Intent(HomeActivity.this, AddShiftActivity.class));
+            Intent intent = new Intent(HomeActivity.this, AddShiftActivity.class);
+            intent.putExtra("userName", userName); // Pass the name to AddShiftActivity
+            startActivity(intent);
         });
 
         // Request swap button click
